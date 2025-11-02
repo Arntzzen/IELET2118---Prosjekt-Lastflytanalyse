@@ -3,7 +3,7 @@ from prettytable import PrettyTable
 import pandas as pd
 
 
-
+w = 2 * np.pi * 50
 ##################### Linjedata ###################
 A = (0.04 + 0.43j, 8.7, 600)
 B = (0.03 + 0.33j, 11.3, 900)
@@ -18,8 +18,11 @@ klasser = np.array([A, A, A, B, C, C, A, A, A], dtype=object)
 ################### Beregninger ###################
 impedanser = {linjer[i]: lengder[i] * klasser[i][0] for i in range(len(linjer))}
 impedanser_pu = {linje: Z / 90 for linje, Z in impedanser.items()}
-kapasitanser = {linjer[i]: lengder[i] * klasser[i][1] for i in range(len(linjer))}
 admittanser_pu = {linje: 1 / Z for linje, Z in impedanser_pu.items()}
+kapasitanser = {linjer[i]: lengder[i] * klasser[i][1] for i in range(len(linjer))}
+shunt_admittanser = {linje: 1j * w * C for linje, C in kapasitanser.items()}
+shunt_admittanser_pu = {linje: Y / 90 for linje, Y in shunt_admittanser.items()}
+shunt_admittanser_pu_half = {linje: Y / 2 for linje, Y in shunt_admittanser_pu.items()}
 
 
 
@@ -32,7 +35,10 @@ df_imp = pd.DataFrame({
     "Impedans (ohm)": [round_complex(z) for z in impedanser.values()],
     "Impedans (p.u.)": [round_complex(z) for z in impedanser_pu.values()],
     "Admittans (p.u.)": [round_complex(y) for y in admittanser_pu.values()],
-    "Kapasitans (nF)": [round(c) for c in kapasitanser.values()]
+    "Kapasitans (nF)": [round(c) for c in kapasitanser.values()],
+    "Shunt Admittans (ohm)": [round_complex(y) for y in shunt_admittanser.values()],
+    "Shunt Admittans (p.u.)": [round_complex(y) for y in shunt_admittanser_pu.values()],
+    "Shunt Admittans (p.u.) half": [round_complex(y) for y in shunt_admittanser_pu_half.values()]
 })
 df_imp.to_excel("linjeimpedanser.xlsx", index=False)
 print(df_imp)
@@ -45,10 +51,13 @@ df_imp_full = pd.DataFrame({
     "Impedans (ohm)": list(impedanser.values()),
     "Impedans (p.u.)": list(impedanser_pu.values()),
     "Admittans (p.u.)": list(admittanser_pu.values()),
-    "Kapasitans (nF)": list(kapasitanser.values())
+    "Kapasitans (nF)": list(kapasitanser.values()),
+    "Shunt Admittans (ohm)": list(shunt_admittanser.values()),
+    "Shunt Admittans (p.u.)": list(shunt_admittanser_pu.values()),
+    "Shunt Admittans (p.u.) half": list(shunt_admittanser_pu_half.values())
 })
 
-df_imp_full.to_excel("linjeimpedanser_full.xlsx", index=False)
+df_imp_full.to_excel("linjeimpedanser_uten_avrunding.xlsx", index=False)
 print(df_imp_full)
 
 
