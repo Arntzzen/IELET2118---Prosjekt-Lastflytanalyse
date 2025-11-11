@@ -8,10 +8,11 @@ function mpc = System
 %   MATPOWER
 
 %	####  Change name of input file (Excel) here  ####
-Bus_data = xlsread('System_data.xlsx','BusData');
-Branch_data = xlsread('System_data.xlsx','BranchData');
+Bus_data = xlsread('System_data_basecase_matlab.xlsx','BusData');
+Branch_data = xlsread('System_data_basecase_matlab.xlsx','BranchData');
 
-
+size(Branch_data)
+size(Bus_data)
 %% MATPOWER Case Format : Version 2
 mpc.version = '2';
 
@@ -20,7 +21,7 @@ mpc.version = '2';
 mpc.baseMVA = Bus_data(1,11);
 
 %% bus data
-
+length(Bus_data)
 Bus = zeros(length(Bus_data(:,1)),13);
 for i = 1:length(Bus_data(:,1))
     Bus(i,1) = round(Bus_data(i,1)); % bus_i
